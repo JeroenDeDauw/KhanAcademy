@@ -13,7 +13,7 @@ import sys
 import itertools
 from Crypto.Util.number import isPrime
 
-def getCountAwareDifference( lists ):
+def getJoinedFactorials( lists ):
     if len( lists ) < 2:
         return lists
     
@@ -49,7 +49,7 @@ def getDivisorsForNumber( number ):
     return divisors
 
 def getSmallestMultiple( numbers, answers ):
-    factorization = getCountAwareDifference( [ getDivisorsForNumber( number ) for number in numbers ] )
+    factorization = getJoinedFactorials( [ getDivisorsForNumber( number ) for number in numbers ] )
     
     for answer in answers:
         allowedDivisors = list( factorization ) # Make an actual copy so stuff does not get removed from original list.
