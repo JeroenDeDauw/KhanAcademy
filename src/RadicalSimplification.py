@@ -29,8 +29,11 @@ class Radical:
         if number != 1:
             if multiplier != 1:
                 txt += " x "
-            root = "sqrt" if order == 2 else "{}root".format( order )
-            txt += "{}( {} )".format( root, number )
+            if order == 1 :
+                txt += str( number )
+            else :
+                root = "sqrt" if order == 2 else "{}root".format( order )
+                txt += "{}( {} )".format( root, number )
         elif multiplier == 1:
             txt = "1"
 
@@ -60,45 +63,60 @@ class Radical:
 
         return devisors
 
-def request_numbers():
-    print "Enter the number, order of expression and multiplier, space separated, last 2 optional:"
-    numbers = raw_input().split( " " )
+def request_numbers( number, order, multiplier ):
+    #print "Enter the number, order of expression and multiplier, space separated, last 2 optional:"
+    numbers = sys.stdin.readline().split( " " )
 
     return ( 
-        float( eval( numbers[0] ) ),
-        2 if len( numbers ) < 2 else float( eval( numbers[1] ) ),
-        1 if len( numbers ) < 3 else float( eval( numbers[2] ) )
+        number if len( numbers ) < 1 else float( eval( numbers[0] ) ),
+        order if len( numbers ) < 2 else float( eval( numbers[1] ) ),
+        multiplier if len( numbers ) < 3 else float( eval( numbers[2] ) )
     )
 
 def show_help():
     print """
-Divisibility.py [-? help]
+RadicalSimplification.py [-n number] [-o order] [-m multiplier] [-? help]
 
 Finds the smallest common multiple.
 
+  -n, --number      number
+                    The number under the root.
+  -o, --order       order
+                    The order of the root. 2 for a square root, 3 for a qubic root.
+  -m, --multiplier  multiplier
+                    A multiplification factor not under the root
   -?, --help
-                Shows this help.
+                    Shows this help.
     """
 
 def main():
     try:
-        opts, arg = getopt.getopt( sys.argv[1:], "?", ["help"] )
+        opts, arg = getopt.getopt( sys.argv[1:], "n:o:m:?", ["number=", "order=", "multiplier=", "help"] )
     except getopt.GetoptError, err:
         print str( err )
         show_help()
         sys.exit( 2 )
 
+    number = 0
+    order = 2
+    multiplier = 1
+
     for opt, arg in opts:
         if opt in ( "-?", "--help" ):
             show_help()
             sys.exit()
+        elif opt in ( "-n", "--number" ):
+            number = float( arg )
+        elif opt in ( "-o", "--order" ):
+            order = float( arg )
+        elif opt in ( "-m", "--multiplier" ):
+            multiplier = float( arg )
         else:
             assert False, "unhandled option"
 
-    while True:
-        radical = Radical( *request_numbers() )
-        radical.simplify()
-        print radical.__repr__()
+    radical = Radical( *request_numbers( number, order, multiplier ) )
+    radical.simplify()
+    sys.stdout.write( radical.__repr__() + "\n" )
 
 if __name__ == '__main__':
     main()
